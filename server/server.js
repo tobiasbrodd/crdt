@@ -3,7 +3,9 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 var notes = {
-    "note1": ""
+    "note1": "",
+    "note2": "",
+    "note3": ""
 };
 
 app.get('/', (req, res) => {
