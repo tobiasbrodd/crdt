@@ -1,20 +1,31 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import styled from 'styled-components';
 import Title from './components/Title.jsx';
 import Note from './components/Note.jsx';
+import socket from './controllers/socket';
 
-function App() {
-    return (
-        <AppContainer>
-            <LayoutHeader position="static" color="secondary">
-                <Title />
-            </LayoutHeader>
-            <LayoutContent>
-                <Note />
-            </LayoutContent>
-        </AppContainer>
-    );
+class App extends Component {
+    constructor() {
+        super();
+
+        this.state = {
+            socket: socket()
+        };
+    }
+
+    render() {
+        return (
+            <AppContainer>
+                <LayoutHeader position="static" color="secondary">
+                    <Title />
+                </LayoutHeader>
+                <LayoutContent>
+                    <Note socket={this.state.socket} />
+                </LayoutContent>
+            </AppContainer>
+        );
+    }
 }
 
 const AppContainer = styled.div`

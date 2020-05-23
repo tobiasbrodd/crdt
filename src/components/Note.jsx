@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
-import socket from '../controllers/socket';
 
 export default class Note extends Component {
     constructor() {
@@ -9,15 +9,14 @@ export default class Note extends Component {
 
         this.state = {
             note: "",
-            noteID: "note1",
-            client: socket()
+            noteID: "note1"
         };
     }
 
     componentDidMount() {
-        this.state.client.registerHandler(this.handler);
+        this.props.socket.registerHandler(this.handler);
 
-        this.state.client.join(this.state.noteID, (note) => {
+        this.props.socket.join(this.state.noteID, (note) => {
             this.setState({
                 note: note
             });
@@ -35,35 +34,81 @@ export default class Note extends Component {
         });
     }
 
-    handleChange = (event) => {
+    handleNoteChange = (event) => {
         const note = event.target.value;
         this.setState({
             note: note
         });
 
-        this.state.client.edit(this.state.noteID, note, (note) => {
+        this.props.socket.edit(this.state.noteID, note, (note) => {
             console.log(note);
+        });
+    }
+
+    handleNoteIDChange = (event) => {
+        const noteID = event.target.value;
+        this.setState({
+            noteID: noteID
+        });
+    }
+
+    submitNoteIDChange = () => {
+        this.props.socket.join(this.state.noteID, (note) => {
+            this.setState({
+                note: note
+            });
         });
     }
 
     render() {
         return (
-            <NoteText
-                variant="outlined"
-                fullWidth
-                multiline
-                value={this.state.note}
-                onChange={this.handleChange}
-                rows={10}
-            />
+            <NoteContainer>
+                <NoteField
+                    variant="outlined"
+                    label="Note"
+                    fullWidth
+                    multiline
+                    value={this.state.note}
+                    onChange={this.handleNoteChange}
+                    rows={10}
+                />
+                <NoteIDField
+                    variant="standard"
+                    label="Note ID"
+                    fullWidth
+                    value={this.state.noteID}
+                    onChange={this.handleNoteIDChange}
+                />
+                <NoteButton
+                    color="primary"
+                    variant="contained"
+                    type="submit"
+                    onClick={this.submitNoteIDChange}
+                >
+                    {"Change Note"}
+                </NoteButton>
+            </NoteContainer>
         );
     }
 }
 
-const NoteText = styled(TextField)`
+const NoteContainer = styled.div`
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
+
+const NoteField = styled(TextField)`
     width: 50vw;
-    height: 85vh;
-    margin: 0 auto;
-    padding: 20px;
+    margin: 20px;
+`;
+
+const NoteIDField = styled(TextField)`
+    width: 200px;
+    margin: 20px;
+`;
+
+const NoteButton = styled(Button)`
+    padding: 10px;
 `;
